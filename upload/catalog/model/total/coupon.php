@@ -1,18 +1,6 @@
 <?php
 class ModelTotalCoupon extends Model {
 	public function getTotal(&$total_data, &$total, &$taxes) {
-		// Fix for manual order editing in Admin
-		if (isset($this->session->data['manual']['coupon'])) {
-			$total_data[] = $this->session->data['manual']['coupon'];
-
-			$discount_total = abs($this->session->data['manual']['coupon']['value']);
-			$total -= $discount_total;
-
-			unset($this->session->data['manual']['coupon']);
-
-			return;
-		}
-
 		if (isset($this->session->data['coupon'])) {
 			$this->language->load('total/coupon');
 

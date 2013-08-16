@@ -439,9 +439,10 @@ class ControllerCheckoutManual extends Controller {
 			}
 
 			// Redeemed Order Totals
+			$this->session->data['manual'] = array();
 			if (isset($this->request->post['order_total'])) {
 				foreach ($this->request->post['order_total'] as $key => $value) {
-					if ($value['code'] == 'coupon' || $value['code'] == 'voucher' || $value['code'] == 'reward' || $value['code'] == 'credit') {
+					if ($value['code'] == 'voucher' || $value['code'] == 'reward' || $value['code'] == 'credit') {
 						$this->session->data['manual'][$value['code']] = array(
 							'code'           => $value['code'],
 							'title'          => $value['title'],

@@ -523,7 +523,7 @@
               </tr>
               <tr>
                 <td class="left"><?php echo $entry_coupon; ?></td>
-                <td class="left"><input type="text" name="coupon" value="" /></td>
+                <td class="left"><input type="text" name="coupon" value="<?php echo $coupon_code; ?>" /></td>
               </tr>
               <tr>
                 <td class="left"><?php echo $entry_voucher; ?></td>

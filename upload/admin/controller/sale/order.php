@@ -1154,6 +1154,19 @@ class ControllerSaleOrder extends Controller {
 			$this->data['order_totals'] = array();
 		}
 
+		$coupon_code = '';
+		foreach ($this->data['order_totals'] as $key => $value) {
+			if ($value['code'] == 'coupon') {
+				$start = strpos($value['title'], '(') + 1;
+				$end = strrpos($value['title'], ')');
+
+				if ($start && $end) {
+					$coupon_code = substr($value['title'], $start, $end - $start);
+				}
+			}
+		}
+		$this->data['coupon_code'] = $coupon_code;
+
 		$this->template = 'sale/order_form.tpl';
 		$this->children = array(
 			'common/header',
