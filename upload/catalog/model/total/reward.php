@@ -2,65 +2,70 @@
 class ModelTotalReward extends Model {
 	public function getTotal(&$total_data, &$total, &$taxes) {
 		// Fix for manual order editing in Admin
-		if (isset($this->session->data['manual']['reward'])) {
-			$total_data[] = $this->session->data['manual']['reward'];
-
-			$discount_total = abs($this->session->data['manual']['reward']['value']);
-			$total -= $discount_total;
-
-			unset($this->session->data['manual']['reward']);
-
-			return;
-		}
+		$reward_points = 0;
 
 		if (isset($this->session->data['reward'])) {
-			$this->language->load('total/reward');
-
 			$points = $this->customer->getRewardPoints();
-
 			if ($this->session->data['reward'] <= $points) {
-				$discount_total = 0;
-
-				$points_total = 0;
-
-				foreach ($this->cart->getProducts() as $product) {
-					if ($product['points']) {
-						$points_total += $product['points'];
-					}
+				$reward_points = $this->session->data['reward'];
+			}
+		} else {
+			if (isset($this->session->data['manual']['reward'])) {
+				$start = strpos($this->session->data['manual']['reward']['title'], '(') + 1;
+				$end = strrpos($this->session->data['manual']['reward']['title'], ')');
+				
+				if ($start && $end) {  
+					$reward_points = substr($this->session->data['manual']['reward']['title'], $start, $end - $start);
 				}
 
-				$points = min($points, $points_total);
+				unset($this->session->data['manual']['reward']);
+			}
+		}
 
-				foreach ($this->cart->getProducts() as $product) {
-					$discount = 0;
+		if ($reward_points) {
+			$this->language->load('total/reward');
 
-					if ($product['points']) {
-						$discount = $product['total'] * ($this->session->data['reward'] / $points_total);
+			$discount_total = 0;
 
-						if ($product['tax_class_id']) {
-							$tax_rates = $this->tax->getRates($product['total'] - ($product['total'] - $discount), $product['tax_class_id']);
+			$points_total = 0;
 
-							foreach ($tax_rates as $tax_rate) {
-								if ($tax_rate['type'] == 'P') {
-									$taxes[$tax_rate['tax_rate_id']] -= $tax_rate['amount'];
-								}
+			foreach ($this->cart->getProducts() as $product) {
+				if ($product['points']) {
+					$points_total += $product['points'];
+				}
+			}
+
+			$reward_points = min($reward_points, $points_total);
+
+			foreach ($this->cart->getProducts() as $product) {
+				$discount = 0;
+				
+				if ($product['points']) {
+					$discount = $product['total'] * ($reward_points / $points_total);
+					
+					if ($product['tax_class_id']) {
+						$tax_rates = $this->tax->getRates($product['total'] - ($product['total'] - $discount), $product['tax_class_id']);
+						
+						foreach ($tax_rates as $tax_rate) {
+							if ($tax_rate['type'] == 'P') {
+								$taxes[$tax_rate['tax_rate_id']] -= $tax_rate['amount'];
 							}
 						}
 					}
-
-					$discount_total += $discount;
 				}
 
-				$total_data[] = array(
-					'code'       => 'reward',
-					'title'      => sprintf($this->language->get('text_reward'), $this->session->data['reward']),
-					'text'       => $this->currency->format(-$discount_total),
-					'value'      => -$discount_total,
-					'sort_order' => $this->config->get('reward_sort_order')
-				);
-
-				$total -= $discount_total;
+				$discount_total += $discount;
 			}
+		
+			$total_data[] = array(
+				'code'       => 'reward',
+				'title'      => sprintf($this->language->get('text_reward'), $reward_points),
+				'text'       => $this->currency->format(-$discount_total),
+				'value'      => -$discount_total,
+				'sort_order' => $this->config->get('reward_sort_order')
+			);
+
+			$total -= $discount_total;
 		}
 	}
 
