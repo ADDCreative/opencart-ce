@@ -8,6 +8,10 @@ class ModelTotalVoucher extends Model {
 
 			$voucher_info = $this->model_checkout_voucher->getVoucher($this->session->data['voucher']);
 
+			if (isset($this->session->data['current_voucher'])) {
+				$voucher_info['amount'] += $this->session->data['current_voucher'];
+			}
+
 			if ($voucher_info) {
 				if ($voucher_info['amount'] > $total) {
 					$amount = $total;
