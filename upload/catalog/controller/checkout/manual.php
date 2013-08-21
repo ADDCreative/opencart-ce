@@ -393,7 +393,7 @@ class ControllerCheckoutManual extends Controller {
 			if (!empty($this->request->post['coupon'])) {
 				$this->load->model('checkout/coupon');
 
-				$coupon_info = $this->model_checkout_coupon->getCoupon($this->request->post['coupon']);
+				$coupon_info = $this->model_checkout_coupon->getCoupon($this->request->post['coupon'], false);
 
 				if ($coupon_info) {
 					$this->session->data['coupon'] = $this->request->post['coupon'];
