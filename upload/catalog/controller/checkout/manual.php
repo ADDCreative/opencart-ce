@@ -408,10 +408,11 @@ class ControllerCheckoutManual extends Controller {
 
 				$voucher_info = $this->model_checkout_voucher->getVoucher($this->request->post['voucher']);
 
-				if ($voucher_info) {
+				if ($this->request->post['voucher'] == $this->request->post['current_voucher']) {
+					$this->session->data['current_voucher_value'] = $this->request->post['current_voucher_value'];
 					$this->session->data['voucher'] = $this->request->post['voucher'];
-					if ($this->session->data['voucher'] == $this->request->post['current_voucher'])
-						$this->session->data['current_voucher'] = $this->request->post['current_voucher_value'];
+				} elseif ($voucher_info) {
+					$this->session->data['voucher'] = $this->request->post['voucher'];
 				} else {
 					$json['error']['voucher'] = $this->language->get('error_voucher');
 				}
