@@ -71,6 +71,9 @@ class ControllerAccountLogin extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			unset($this->session->data['guest']);
 
+			$this->session->data['login_token'] = 'A_secure_token';
+			$this->session->data['login_time'] = time();
+
 			// Default Shipping Address
 			$this->load->model('account/address');
 

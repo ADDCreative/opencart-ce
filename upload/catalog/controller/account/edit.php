@@ -9,6 +9,14 @@ class ControllerAccountEdit extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
+		if (!isset($this->session->data['login_time']) || (time() - $this->session->data['login_time'] > 120)) {
+			$this->customer->logout();
+
+			$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
+
+			$this->redirect($this->url->link('account/login', '', 'SSL'));
+		}
+
 		$this->language->load('account/edit');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -16,6 +24,11 @@ class ControllerAccountEdit extends Controller {
 		$this->load->model('account/customer');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+				$this->session->data['redirect'] = $this->url->link('account/password', '', 'SSL');
+			}
+
 			$this->model_account_customer->editCustomer($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -86,7 +99,7 @@ class ControllerAccountEdit extends Controller {
 			$this->data['error_telephone'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('account/edit', '', 'SSL');
+		$this->data['action'] = $this->url->link('account/edit', 'login_token=' . $this->session->data['login_token'], 'SSL');
 
 		if ($this->request->server['REQUEST_METHOD'] != 'POST') {
 			$customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
