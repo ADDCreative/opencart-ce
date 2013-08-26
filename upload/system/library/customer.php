@@ -44,6 +44,20 @@ class Customer {
 	}
 
 	public function login($email, $password, $override = false) {
+		// Create customer login token if HTTPS
+		if ($this->config->get('config_secure')) {
+			if (isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTPS'] == '1'))) {
+				// Regenerate session id and create a token
+				session_regenerate_id(true);
+				$this->session->data['customer_token'] = hash_rand('md5');
+
+				// Create a cookie and restrict it to HTTPS pages
+				setcookie('customer_token', $this->session->data['customer_token'], 0, '/', '', true, true);
+			} else {
+				return false;
+			}
+		}
+
 		if ($override) {
 			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
 		} else {
