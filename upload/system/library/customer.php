@@ -46,7 +46,7 @@ class Customer {
 	public function login($email, $password, $override = false) {
 		// Create customer login token if HTTPS
 		if ($this->config->get('config_secure')) {
-			if (isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTPS'] == '1'))) {
+			if ($this->request->isSecure()) {
 				// Regenerate session id and create a token
 				session_regenerate_id(true);
 				$this->session->data['customer_token'] = hash_rand('md5');

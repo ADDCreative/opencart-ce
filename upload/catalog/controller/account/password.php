@@ -11,9 +11,10 @@ class ControllerAccountPassword extends Controller {
 
 		// Check customer login token if HTTPS
 		if ($this->config->get('config_secure')) {
-			if ((!isset($_SERVER['HTTPS']) || (($_SERVER['HTTPS'] != 'on') && ($_SERVER['HTTPS'] != '1'))) ||
-				(!isset($this->cookie['customer_token']) && !isset($this->session->data['customer_token']) && $this->cookie['customer_token'] != $this->session->data['customer_token'])) {
+			if (!$this->request->isSecure() || !isset($this->request->cookie['customer_token']) || !isset($this->session->data['customer_token']) || $this->request->cookie['customer_token'] != $this->session->data['customer_token']) {
 				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/password', '', 'SSL');
 
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
