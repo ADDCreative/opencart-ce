@@ -47,11 +47,9 @@ class Customer {
 		// Create customer login token if HTTPS
 		if ($this->config->get('config_secure')) {
 			if ($this->request->isSecure()) {
-				// Regenerate session id and create a token
-				session_regenerate_id(true);
+				// Create a token cookie and restrict it to HTTPS pages
 				$this->session->data['customer_token'] = hash_rand('md5');
 
-				// Create a cookie and restrict it to HTTPS pages
 				setcookie('customer_token', $this->session->data['customer_token'], 0, '/', '', true, true);
 			} else {
 				return false;
@@ -65,6 +63,9 @@ class Customer {
 		}
 
 		if ($customer_query->num_rows) {
+			// Regenerate session id
+			$this->session->regenerateId();
+
 			$this->session->data['customer_id'] = $customer_query->row['customer_id'];
 
 			if ($customer_query->row['cart'] && is_string($customer_query->row['cart'])) {

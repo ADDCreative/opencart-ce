@@ -17,5 +17,9 @@ class Session {
 	function getId() {
 		return session_id();
 	}
+
+	public function regenerateId() {
+		session_regenerate_id(true);
+	}
 }
 ?>
