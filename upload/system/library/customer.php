@@ -44,18 +44,6 @@ class Customer {
 	}
 
 	public function login($email, $password, $override = false) {
-		// Create customer login token if HTTPS
-		if ($this->config->get('config_secure')) {
-			if ($this->request->isSecure()) {
-				// Create a token cookie and restrict it to HTTPS pages
-				$this->session->data['customer_token'] = hash_rand('md5');
-
-				setcookie('customer_token', $this->session->data['customer_token'], 0, '/', '', true, true);
-			} else {
-				return false;
-			}
-		}
-
 		if ($override) {
 			$customer_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND status = '1'");
 		} else {
@@ -63,6 +51,18 @@ class Customer {
 		}
 
 		if ($customer_query->num_rows) {
+			// Create customer login token if HTTPS
+			if ($this->config->get('config_secure')) {
+				if ($this->request->isSecure()) {
+					// Create a token cookie and restrict it to HTTPS pages
+					$this->session->data['customer_token'] = hash_rand('md5');
+	
+					setcookie('customer_token', $this->session->data['customer_token'], 0, '/', '', true, true);
+				} else {
+					return false;
+				}
+			}
+
 			// Regenerate session id
 			$this->session->regenerateId();
 
