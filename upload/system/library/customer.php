@@ -56,7 +56,7 @@ class Customer {
 				if ($this->request->isSecure()) {
 					// Create a token cookie and restrict it to HTTPS pages
 					$this->session->data['customer_token'] = hash_rand('md5');
-	
+
 					setcookie('customer_token', $this->session->data['customer_token'], 0, '/', '', true, true);
 				} else {
 					return false;
@@ -130,6 +130,14 @@ class Customer {
 
 	public function isLogged() {
 		return $this->customer_id;
+	}
+
+	public function isSecure() {
+		if (isset($this->request->cookie['customer_token']) && isset($this->session->data['customer_token']) && $this->request->cookie['customer_token'] == $this->session->data['customer_token']) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public function getId() {

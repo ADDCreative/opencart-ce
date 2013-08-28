@@ -10,14 +10,12 @@ class ControllerAccountEdit extends Controller {
 		}
 
 		// Check customer login token if HTTPS
-		if ($this->config->get('config_secure')) {
-			if (!$this->request->isSecure() || !isset($this->request->cookie['customer_token']) || !isset($this->session->data['customer_token']) || $this->request->cookie['customer_token'] != $this->session->data['customer_token']) {
-				$this->customer->logout();
+		if ($this->config->get('config_secure') && (!$this->request->isSecure() || !$this->customer->isSecure())) {
+			$this->customer->logout();
 
-				$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
+			$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
 
-				$this->redirect($this->url->link('account/login', '', 'SSL'));
-			}
+			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
 		$this->language->load('account/edit');
