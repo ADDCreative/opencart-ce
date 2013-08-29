@@ -66,6 +66,11 @@ class Customer {
 			// Regenerate session id
 			$this->session->regenerateId();
 
+			$this->session->data['login_token'] = hash_rand('md5');
+
+			// Regenerate session id
+			$this->session->regenerateId();
+
 			$this->session->data['customer_id'] = $customer_query->row['customer_id'];
 
 			if ($customer_query->row['cart'] && is_string($customer_query->row['cart'])) {
