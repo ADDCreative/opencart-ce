@@ -300,6 +300,14 @@ class ControllerAccountReturn extends Controller {
 		$this->load->model('account/return');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/return/insert', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->model_account_return->addReturn($this->request->post);
 
 			$this->redirect($this->url->link('account/return/success', '', 'SSL'));
@@ -415,7 +423,7 @@ class ControllerAccountReturn extends Controller {
 			$this->data['error_captcha'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('account/return/insert', '', 'SSL');
+		$this->data['action'] = $this->url->link('account/return/insert', 'login_token=' . $this->session->data['login_token'], 'SSL');
 
 		$this->load->model('account/order');
 

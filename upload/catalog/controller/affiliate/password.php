@@ -14,6 +14,14 @@ class ControllerAffiliatePassword extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->get['affiliate_token']) || !isset($this->session->data['affiliate_token']) || $this->request->get['affiliate_token'] != $this->session->data['affiliate_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('affiliate/password', '', 'SSL');
+
+				$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+			}
+
 			$this->load->model('affiliate/affiliate');
 
 			$this->model_affiliate_affiliate->editPassword($this->affiliate->getEmail(), $this->request->post['password']);
@@ -65,7 +73,7 @@ class ControllerAffiliatePassword extends Controller {
 			$this->data['error_confirm'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('affiliate/password', '', 'SSL');
+		$this->data['action'] = $this->url->link('affiliate/password', 'affiliate_token=' . $this->session->data['affiliate_token'], 'SSL');
 
 		if (isset($this->request->post['password'])) {
 			$this->data['password'] = $this->request->post['password'];

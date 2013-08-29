@@ -16,6 +16,14 @@ class ControllerAffiliatePayment extends Controller {
 		$this->load->model('affiliate/affiliate');
 
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+			if (!isset($this->request->get['affiliate_token']) || !isset($this->session->data['affiliate_token']) || $this->request->get['affiliate_token'] != $this->session->data['affiliate_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('affiliate/payment', '', 'SSL');
+
+				$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+			}
+
 			$this->model_affiliate_affiliate->editPayment($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -63,7 +71,7 @@ class ControllerAffiliatePayment extends Controller {
 		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['button_back'] = $this->language->get('button_back');
 
-		$this->data['action'] = $this->url->link('affiliate/payment', '', 'SSL');
+		$this->data['action'] = $this->url->link('affiliate/payment', 'affiliate_token=' . $this->session->data['affiliate_token'], 'SSL');
 
 		if ($this->request->server['REQUEST_METHOD'] != 'POST') {
 			$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($this->affiliate->getId());

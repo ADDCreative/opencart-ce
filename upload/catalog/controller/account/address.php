@@ -32,6 +32,14 @@ class ControllerAccountAddress extends Controller {
 		$this->load->model('account/address');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/address/insert', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->model_account_address->addAddress($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_insert');
@@ -56,6 +64,14 @@ class ControllerAccountAddress extends Controller {
 		$this->load->model('account/address');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/address/update', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->model_account_address->editAddress($this->request->get['address_id'], $this->request->post);
 
 			// Default Shipping Address
@@ -99,6 +115,14 @@ class ControllerAccountAddress extends Controller {
 		$this->load->model('account/address');
 
 		if (isset($this->request->get['address_id']) && $this->validateDelete()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/address/delete', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->model_account_address->deleteAddress($this->request->get['address_id']);
 
 			// Default Shipping Address
@@ -211,7 +235,7 @@ class ControllerAccountAddress extends Controller {
 				'address_id' => $result['address_id'],
 				'address'    => str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format)))),
 				'update'     => $this->url->link('account/address/update', 'address_id=' . $result['address_id'], 'SSL'),
-				'delete'     => $this->url->link('account/address/delete', 'address_id=' . $result['address_id'], 'SSL')
+				'delete'     => $this->url->link('account/address/delete', 'address_id=' . $result['address_id'] . '&login_token=' . $this->session->data['login_token'], 'SSL')
 			);
 		}
 
@@ -350,9 +374,9 @@ class ControllerAccountAddress extends Controller {
 		}
 
 		if (!isset($this->request->get['address_id'])) {
-			$this->data['action'] = $this->url->link('account/address/insert', '', 'SSL');
+			$this->data['action'] = $this->url->link('account/address/insert', 'login_token=' . $this->session->data['login_token'], 'SSL');
 		} else {
-			$this->data['action'] = $this->url->link('account/address/update', 'address_id=' . $this->request->get['address_id'], 'SSL');
+			$this->data['action'] = $this->url->link('account/address/update', 'address_id=' . $this->request->get['address_id'] . '&login_token=' . $this->session->data['login_token'], 'SSL');
 		}
 
 		if (isset($this->request->get['address_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {

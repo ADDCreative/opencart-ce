@@ -16,6 +16,14 @@ class ControllerAffiliateEdit extends Controller {
 		$this->load->model('affiliate/affiliate');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->get['affiliate_token']) || !isset($this->session->data['affiliate_token']) || $this->request->get['affiliate_token'] != $this->session->data['affiliate_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('affiliate/edit', '', 'SSL');
+
+				$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+			}
+
 			$this->model_affiliate_affiliate->editAffiliate($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -126,7 +134,7 @@ class ControllerAffiliateEdit extends Controller {
 			$this->data['error_zone'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('affiliate/edit', '', 'SSL');
+		$this->data['action'] = $this->url->link('affiliate/edit', 'affiliate_token=' . $this->session->data['affiliate_token'], 'SSL');
 
 		if ($this->request->server['REQUEST_METHOD'] != 'POST') {
 			$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($this->affiliate->getId());

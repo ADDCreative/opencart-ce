@@ -12,6 +12,14 @@ class ControllerAccountVoucher extends Controller {
 		}
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/voucher', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->session->data['vouchers'][mt_rand()] = array(
 				'description'      => sprintf($this->language->get('text_for'), $this->currency->format($this->currency->convert($this->request->post['amount'], $this->currency->getCode(), $this->config->get('config_currency'))), $this->request->post['to_name']),
 				'to_name'          => $this->request->post['to_name'],
@@ -103,7 +111,7 @@ class ControllerAccountVoucher extends Controller {
 			$this->data['error_amount'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('account/voucher', '', 'SSL');
+		$this->data['action'] = $this->url->link('account/voucher', 'login_token=' . $this->session->data['login_token'], 'SSL');
 
 		if (isset($this->request->post['to_name'])) {
 			$this->data['to_name'] = $this->request->post['to_name'];

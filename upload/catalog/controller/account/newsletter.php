@@ -12,6 +12,14 @@ class ControllerAccountNewsletter extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/newsletter', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$this->load->model('account/customer');
 
 			$this->model_account_customer->editNewsletter($this->request->post['newsletter']);
@@ -51,7 +59,7 @@ class ControllerAccountNewsletter extends Controller {
 		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['button_back'] = $this->language->get('button_back');
 
-		$this->data['action'] = $this->url->link('account/newsletter', '', 'SSL');
+		$this->data['action'] = $this->url->link('account/newsletter', 'login_token=' . $this->session->data['login_token'], 'SSL');
 
 		$this->data['newsletter'] = $this->customer->getNewsletter();
 
