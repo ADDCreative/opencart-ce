@@ -18,6 +18,14 @@ class ControllerAccountWishList extends Controller {
 		}
 
 		if (isset($this->request->get['remove'])) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$key = array_search($this->request->get['remove'], $this->session->data['wishlist']);
 
 			if ($key !== false) {
@@ -115,7 +123,7 @@ class ControllerAccountWishList extends Controller {
 					'price'      => $price,
 					'special'    => $special,
 					'href'       => $this->url->link('product/product', 'product_id=' . $product_info['product_id']),
-					'remove'     => $this->url->link('account/wishlist', 'remove=' . $product_info['product_id'], 'SSL')
+					'remove'     => $this->url->link('account/wishlist', 'remove=' . $product_info['product_id'] . '&login_token=' . $this->session->data['login_token'], 'SSL')
 				);
 			} else {
 				unset($this->session->data['wishlist'][$key]);
