@@ -14,6 +14,14 @@ class ControllerAccountOrder extends Controller {
 		$this->load->model('account/order');
 
 		if (isset($this->request->get['order_id'])) {
+			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+				$this->customer->logout();
+
+				$this->session->data['redirect'] = $this->url->link('account/order', '', 'SSL');
+
+				$this->redirect($this->url->link('account/login', '', 'SSL'));
+			}
+
 			$order_info = $this->model_account_order->getOrder($this->request->get['order_id']);
 
 			if ($order_info) {
@@ -111,7 +119,7 @@ class ControllerAccountOrder extends Controller {
 				'products'   => ($product_total + $voucher_total),
 				'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
 				'href'       => $this->url->link('account/order/info', 'order_id=' . $result['order_id'], 'SSL'),
-				'reorder'    => $this->url->link('account/order', 'order_id=' . $result['order_id'], 'SSL')
+				'reorder'    => $this->url->link('account/order', 'order_id=' . $result['order_id'] . '&login_token=' . $this->session->data['login_token'], 'SSL')
 			);
 		}
 
