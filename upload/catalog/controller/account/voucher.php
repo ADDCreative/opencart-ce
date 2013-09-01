@@ -12,7 +12,7 @@ class ControllerAccountVoucher extends Controller {
 		}
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+			if (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || $this->request->get['customer_token'] != $this->session->data['customer_token']) {
 				$this->customer->logout();
 
 				$this->session->data['redirect'] = $this->url->link('account/voucher', '', 'SSL');
@@ -111,7 +111,7 @@ class ControllerAccountVoucher extends Controller {
 			$this->data['error_amount'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('account/voucher', 'login_token=' . $this->session->data['login_token'], 'SSL');
+		$this->data['action'] = $this->url->link('account/voucher', 'customer_token=' . $this->session->data['customer_token'], 'SSL');
 
 		if (isset($this->request->post['to_name'])) {
 			$this->data['to_name'] = $this->request->post['to_name'];
