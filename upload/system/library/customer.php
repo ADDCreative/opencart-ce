@@ -169,5 +169,13 @@ class Customer {
 
 		return $query->row['total'];
 	}
+
+	public function isLoginExpired($age = 600) {
+		if (isset($this->session->data['customer_timestamp']) && ((time() - $this->session->data['customer_timestamp']) < $age)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 ?>

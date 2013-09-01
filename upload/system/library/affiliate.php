@@ -100,5 +100,13 @@ class Affiliate {
 	public function getCode() {
 		return $this->code;
 	}
+
+	public function isLoginExpired($age = 600) {
+		if (isset($this->session->data['affiliate_timestamp']) && ((time() - $this->session->data['affiliate_timestamp']) < $age)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 ?>
