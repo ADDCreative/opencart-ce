@@ -9,6 +9,15 @@ class ControllerAccountPassword extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
+		// Check customer cookie if HTTPS
+		if (!$this->customer->isSecure())) {
+			$this->customer->logout();
+
+			$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
+
+			$this->redirect($this->url->link('account/login', '', 'SSL'));
+		}
+
 		$this->language->load('account/password');
 
 		$this->document->setTitle($this->language->get('heading_title'));

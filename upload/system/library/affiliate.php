@@ -37,6 +37,9 @@ class Affiliate {
 		$affiliate_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND (password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') AND status = '1' AND approved = '1'");
 
 		if ($affiliate_query->num_rows) {
+			// Token used to protect affiliate functions against CSRF
+			$this->setToken();
+
 			// Regenerate session id
 			$this->session->regenerateId();
 
@@ -97,6 +100,26 @@ class Affiliate {
 
 	public function getCode() {
 		return $this->code;
+	}
+
+	public function setToken() {
+		$this->session->data['affiliate_token'] = hash_rand('md5');
+	}
+
+	public function isLoginExpired($age = 600) {
+		if (isset($this->session->data['affiliate_timestamp']) && ((time() - $this->session->data['affiliate_timestamp']) < $age)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public function isSecure() {
+		if (!$this->config->get('config_secure') || ($this->request->isSecure() && isset($this->request->cookie['affiliate']) && isset($this->session->data['affiliate_cookie']) && $this->request->cookie['affiliate'] == $this->session->data['affiliate_cookie'])) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

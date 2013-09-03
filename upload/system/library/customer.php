@@ -51,7 +51,20 @@ class Customer {
 		}
 
 		if ($customer_query->num_rows) {
-			$this->session->data['login_token'] = hash_rand('md5');
+			// Create customer login cookie if HTTPS
+			if ($this->config->get('config_secure')) {
+				if ($this->request->isSecure()) {
+					// Create a cookie and restrict it to HTTPS pages
+					$this->session->data['customer_token'] = hash_rand('md5');
+
+					setcookie('customer', $this->session->data['customer_cookie'], 0, '/', '', true, true);
+				} else {
+					return false;
+				}
+			}
+
+			// Token used to protect account functions against CSRF
+			$this->setToken();
 
 			// Regenerate session id
 			$this->session->regenerateId();
@@ -168,6 +181,25 @@ class Customer {
 		$query = $this->db->query("SELECT SUM(points) AS total FROM " . DB_PREFIX . "customer_reward WHERE customer_id = '" . (int)$this->customer_id . "'");
 
 		return $query->row['total'];
+	}
+
+	public function setToken() {
+		$this->session->data['customer_token'] = hash_rand('md5');
+	}
+
+	public function isLoginExpired($age = 600) {
+		if (isset($this->session->data['customer_timestamp']) && ((time() - $this->session->data['customer_timestamp']) < $age)) {
+		} else {
+			return true;
+		}
+	}
+
+	public function isSecure() {
+		if (!$this->config->get('config_secure') || ($this->request->isSecure() && isset($this->request->cookie['customer']) && isset($this->session->data['customer_cookie']) && $this->request->cookie['customer'] == $this->session->data['customer_cookie'])) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>
