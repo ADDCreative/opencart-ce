@@ -10,10 +10,10 @@ class ControllerAccountPassword extends Controller {
 		}
 
 		// Check customer cookie if HTTPS
-		if (!$this->customer->isSecure())) {
+		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
-			$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');
+			$this->session->data['redirect'] = $this->url->link('account/password', '', 'SSL');
 
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
@@ -22,8 +22,8 @@ class ControllerAccountPassword extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			if (!isset($this->request->get['login_token']) || !isset($this->session->data['login_token']) || $this->request->get['login_token'] != $this->session->data['login_token']) {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+			if (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || $this->request->get['customer_token'] != $this->session->data['customer_token']) {
 				$this->customer->logout();
 
 				$this->session->data['redirect'] = $this->url->link('account/password', '', 'SSL');
@@ -31,13 +31,17 @@ class ControllerAccountPassword extends Controller {
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
 
-			$this->load->model('account/customer');
+			$this->customer->setToken();
 
-			$this->model_account_customer->editPassword($this->customer->getEmail(), $this->request->post['password']);
-
-			$this->session->data['success'] = $this->language->get('text_success');
-
-			$this->redirect($this->url->link('account/account', '', 'SSL'));
+			if ($this->validate()) {
+				$this->load->model('account/customer');
+	
+				$this->model_account_customer->editPassword($this->customer->getEmail(), $this->request->post['password']);
+	
+				$this->session->data['success'] = $this->language->get('text_success');
+	
+				$this->redirect($this->url->link('account/account', '', 'SSL'));
+			}
 		}
 
 		$this->data['breadcrumbs'] = array();
@@ -82,7 +86,7 @@ class ControllerAccountPassword extends Controller {
 			$this->data['error_confirm'] = '';
 		}
 
-		$this->data['action'] = $this->url->link('account/password', 'login_token=' . $this->session->data['login_token'], 'SSL');
+		$this->data['action'] = $this->url->link('account/password', 'customer_token=' . $this->session->data['customer_token'], 'SSL');
 
 		if (isset($this->request->post['password'])) {
 			$this->data['password'] = $this->request->post['password'];

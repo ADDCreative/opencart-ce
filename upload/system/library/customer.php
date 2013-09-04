@@ -55,7 +55,7 @@ class Customer {
 			if ($this->config->get('config_secure')) {
 				if ($this->request->isSecure()) {
 					// Create a cookie and restrict it to HTTPS pages
-					$this->session->data['customer_token'] = hash_rand('md5');
+					$this->session->data['customer_cookie'] = hash_rand('md5');
 
 					setcookie('customer', $this->session->data['customer_cookie'], 0, '/', '', true, true);
 				} else {
@@ -119,6 +119,7 @@ class Customer {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET cart = '" . $this->db->escape(isset($this->session->data['cart']) ? serialize($this->session->data['cart']) : '') . "', wishlist = '" . $this->db->escape(isset($this->session->data['wishlist']) ? serialize($this->session->data['wishlist']) : '') . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
 		unset($this->session->data['customer_id']);
+		unset($this->session->data['customer_cookie']);
 
 		$this->customer_id = '';
 		$this->firstname = '';
