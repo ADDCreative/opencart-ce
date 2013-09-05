@@ -51,7 +51,7 @@ class ControllerAccountAddress extends Controller {
 			if (!isset($this->request->get['customer_token']) || !isset($this->session->data['customer_token']) || $this->request->get['customer_token'] != $this->session->data['customer_token']) {
 				$this->customer->logout();
 
-				$this->session->data['redirect'] = $this->url->link('account/address/insert', '', 'SSL');
+				$this->session->data['redirect'] = $this->url->link('account/address', '', 'SSL');
 
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
