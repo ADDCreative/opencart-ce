@@ -9,7 +9,6 @@ class ControllerAccountAddress extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -34,7 +33,6 @@ class ControllerAccountAddress extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -58,6 +56,8 @@ class ControllerAccountAddress extends Controller {
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
 
+			$this->customer->setToken();
+
 			if ($this->validateForm() {
 				$this->model_account_address->addAddress($this->request->post);
 
@@ -77,7 +77,6 @@ class ControllerAccountAddress extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -100,6 +99,8 @@ class ControllerAccountAddress extends Controller {
 
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
+
+			$this->customer->setToken();
 
 			if ($this->validateForm() {
 				$this->model_account_address->editAddress($this->request->get['address_id'], $this->request->post);
@@ -140,7 +141,6 @@ class ControllerAccountAddress extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -163,6 +163,8 @@ class ControllerAccountAddress extends Controller {
 
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
+
+			$this->customer->setToken();
 
 			if ($this->validateDelete() {
 				$this->model_account_address->deleteAddress($this->request->get['address_id']);

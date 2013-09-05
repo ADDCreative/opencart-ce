@@ -49,13 +49,14 @@ class Affiliate {
 				}
 			}
 
-			// Token used to protect affiliate functions against CSRF
-			$this->setToken();
-
 			// Regenerate session id
 			$this->session->regenerateId();
 
+			// Token used to protect affiliate functions against CSRF
+			$this->setToken();
+
 			$this->session->data['affiliate_id'] = $affiliate_query->row['affiliate_id'];
+			$this->session->data['affiliate_login_time'] = time();
 
 			$this->affiliate_id = $affiliate_query->row['affiliate_id'];
 			$this->firstname = $affiliate_query->row['firstname'];
@@ -74,6 +75,8 @@ class Affiliate {
 	public function logout() {
 		unset($this->session->data['affiliate_id']);
 		unset($this->session->data['affiliate_cookie']);
+		unset($this->session->data['affiliate_token']);
+		unset($this->session->data['affiliate_login_time']);
 
 		$this->affiliate_id = '';
 		$this->firstname = '';
@@ -115,23 +118,23 @@ class Affiliate {
 		return $this->code;
 	}
 
-	public function setToken() {
-		$this->session->data['affiliate_token'] = hash_rand('md5');
-	}
-
-	public function isLoginExpired($age = 600) {
-		if (isset($this->session->data['affiliate_timestamp']) && ((time() - $this->session->data['affiliate_timestamp']) < $age)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
 	public function isSecure() {
 		if (!$this->config->get('config_secure') || ($this->request->isSecure() && isset($this->request->cookie['affiliate']) && isset($this->session->data['affiliate_cookie']) && $this->request->cookie['affiliate'] == $this->session->data['affiliate_cookie'])) {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public function setToken() {
+		$this->session->data['affiliate_token'] = hash_rand('md5');
+	}
+
+	public function loginExpired($age = 900) {
+		if (isset($this->session->data['affiliate_login_time']) && (time() - $this->session->data['affiliate_login_time'] < $age)) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 }

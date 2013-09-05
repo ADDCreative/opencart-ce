@@ -7,7 +7,6 @@ class ControllerAccountNewsletter extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -28,6 +27,8 @@ class ControllerAccountNewsletter extends Controller {
 
 				$this->redirect($this->url->link('account/login', '', 'SSL'));
 			}
+
+			$this->customer->setToken();
 
 			$this->load->model('account/customer');
 

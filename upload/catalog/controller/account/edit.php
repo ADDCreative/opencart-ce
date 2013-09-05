@@ -9,8 +9,7 @@ class ControllerAccountEdit extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
-		if (!$this->customer->isSecure()) {
+		if (!$this->customer->isSecure() || $this->customer->loginExpired()) {
 			$this->customer->logout();
 
 			$this->session->data['redirect'] = $this->url->link('account/edit', '', 'SSL');

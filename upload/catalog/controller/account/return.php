@@ -9,7 +9,6 @@ class ControllerAccountReturn extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
@@ -129,7 +128,6 @@ class ControllerAccountReturn extends Controller {
 			$this->redirect($this->url->link('account/login', '', 'SSL'));
 		}
 
-		// Check customer cookie if HTTPS
 		if (!$this->customer->isSecure()) {
 			$this->customer->logout();
 
