@@ -36,9 +36,9 @@ class ControllerAffiliateEdit extends Controller {
 
 			if ($this->validate()) {
 				$this->model_affiliate_affiliate->editAffiliate($this->request->post);
-	
+
 				$this->session->data['success'] = $this->language->get('text_success');
-	
+
 				$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
 			}
 		}

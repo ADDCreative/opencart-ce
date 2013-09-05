@@ -26,7 +26,6 @@ class ControllerAccountWishList extends Controller {
 		}
 
 		if (isset($this->request->get['remove'])) {
-
 			$key = array_search($this->request->get['remove'], $this->session->data['wishlist']);
 
 			if ($key !== false) {

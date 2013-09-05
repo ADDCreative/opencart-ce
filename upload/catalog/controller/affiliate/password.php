@@ -34,11 +34,11 @@ class ControllerAffiliatePassword extends Controller {
 
 			if ($this->validate()) {
 				$this->load->model('affiliate/affiliate');
-	
+
 				$this->model_affiliate_affiliate->editPassword($this->affiliate->getEmail(), $this->request->post['password']);
-	
+
 				$this->session->data['success'] = $this->language->get('text_success');
-	
+
 				$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
 			}
 		}

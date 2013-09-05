@@ -34,11 +34,11 @@ class ControllerAccountPassword extends Controller {
 
 			if ($this->validate()) {
 				$this->load->model('account/customer');
-	
+
 				$this->model_account_customer->editPassword($this->customer->getEmail(), $this->request->post['password']);
-	
+
 				$this->session->data['success'] = $this->language->get('text_success');
-	
+
 				$this->redirect($this->url->link('account/account', '', 'SSL'));
 			}
 		}
