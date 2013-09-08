@@ -524,6 +524,7 @@ class ControllerSaleAffiliate extends Controller {
 		$this->data['entry_telephone'] = $this->language->get('entry_telephone');
 		$this->data['entry_fax'] = $this->language->get('entry_fax');
 		$this->data['entry_company'] = $this->language->get('entry_company');
+		$this->data['entry_website'] = $this->language->get('entry_website');
 		$this->data['entry_address_1'] = $this->language->get('entry_address_1');
 		$this->data['entry_address_2'] = $this->language->get('entry_address_2');
 		$this->data['entry_city'] = $this->language->get('entry_city');
@@ -748,6 +749,14 @@ class ControllerSaleAffiliate extends Controller {
 			$this->data['company'] = $affiliate_info['company'];
 		} else {
 			$this->data['company'] = '';
+		}
+
+		if (isset($this->request->post['website'])) {
+			$this->data['website'] = $this->request->post['website'];
+		} elseif (!empty($affiliate_info)) { 
+			$this->data['website'] = $affiliate_info['website'];
+		} else {
+			$this->data['website'] = '';
 		}
 
 		if (isset($this->request->post['address_1'])) {

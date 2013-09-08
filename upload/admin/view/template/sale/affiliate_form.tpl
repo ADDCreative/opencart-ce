@@ -59,6 +59,10 @@
               <td><input type="text" name="company" value="<?php echo $company; ?>" /></td>
             </tr>
             <tr>
+              <td><?php echo $entry_website; ?></td>
+              <td><input type="text" name="website" value="<?php echo $website; ?>" /></td>
+            </tr>
+            <tr>
               <td><span class="required">*</span> <?php echo $entry_address_1; ?></td>
               <td><input type="text" name="address_1" value="<?php echo $address_1; ?>" />
                 <?php if ($error_address_1) { ?>
