@@ -3,6 +3,10 @@ class ControllerInformationContact extends Controller {
 	private $error = array();
 
 	public function index() {
+		if ($this->config->get('config_secure') && !$this->request->isSecure()) {
+			$this->redirect($this->url->link('information/contact', '', 'SSL'));
+		}
+
 		$this->language->load('information/contact');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -36,7 +40,7 @@ class ControllerInformationContact extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('information/contact'),
+			'href'      => $this->url->link('information/contact', '', 'SSL'),
 			'separator' => $this->language->get('text_separator')
 		);
 
@@ -79,7 +83,7 @@ class ControllerInformationContact extends Controller {
 
 		$this->data['button_continue'] = $this->language->get('button_continue');
 
-		$this->data['action'] = $this->url->link('information/contact');
+		$this->data['action'] = $this->url->link('information/contact', '', 'SSL');
 		$this->data['store'] = $this->config->get('config_name');
 		$this->data['address'] = nl2br($this->config->get('config_address'));
 		$this->data['telephone'] = $this->config->get('config_telephone');
@@ -142,7 +146,7 @@ class ControllerInformationContact extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('information/contact'),
+			'href'      => $this->url->link('information/contact', '', 'SSL'),
 			'separator' => $this->language->get('text_separator')
 		);
 

@@ -82,7 +82,7 @@ class ControllerInformationSitemap extends Controller {
 		$this->data['cart'] = $this->url->link('checkout/cart');
 		$this->data['checkout'] = $this->url->link('checkout/checkout', '', 'SSL');
 		$this->data['search'] = $this->url->link('product/search');
-		$this->data['contact'] = $this->url->link('information/contact');
+		$this->data['contact'] = $this->url->link('information/contact', '', 'SSL');
 
 		$this->load->model('catalog/information');
 

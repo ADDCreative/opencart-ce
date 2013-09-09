@@ -98,7 +98,7 @@ class ControllerPaymentPaymate extends Controller {
 
 			$this->data['heading_title'] = $this->language->get('text_failed');
 
-			$this->data['text_message'] = sprintf($this->language->get('text_failed_message'), $error, $this->url->link('information/contact'));
+			$this->data['text_message'] = sprintf($this->language->get('text_failed_message'), $error, $this->url->link('information/contact', '', 'SSL'));
 
 			$this->data['button_continue'] = $this->language->get('button_continue');
 

@@ -19,7 +19,7 @@ class ControllerModuleInformation extends Controller {
 			);
 		}
 
-		$this->data['contact'] = $this->url->link('information/contact');
+		$this->data['contact'] = $this->url->link('information/contact', '', 'SSL');
 		$this->data['sitemap'] = $this->url->link('information/sitemap');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/module/information.tpl')) {

@@ -53,7 +53,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 		$this->data['button_continue'] = $this->language->get('button_continue');
 
 		if (empty($this->session->data['shipping_methods'])) {
-			$this->data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
+			$this->data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact', '', 'SSL'));
 		} else {
 			$this->data['error_warning'] = '';
 		}
