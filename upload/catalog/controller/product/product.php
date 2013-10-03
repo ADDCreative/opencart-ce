@@ -48,7 +48,7 @@ class ControllerProductProduct extends Controller {
 				if ($category_info) {
 					$this->data['breadcrumbs'][] = array(
 						'text'      => $category_info['name'],
-						'href'      => $this->url->link('product/category', 'path=' . $path),
+						'href'      => $this->url->link('product/category', 'path=' . $path . $url),
 						'separator' => $this->language->get('text_separator')
 					);
 				}
