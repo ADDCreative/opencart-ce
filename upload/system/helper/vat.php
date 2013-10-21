@@ -10,7 +10,7 @@ function vat_validation($prefix, $number) {
 		'FX' => 'FR', //France métropolitaine
 		'DE' => 'DE', //Germany
 		'GR' => 'EL', //Greece
-		'IE' => 'IE', //Irland
+		'IE' => 'IE', //Ireland
 		'IT' => 'IT', //Italy
 		'LU' => 'LU', //Luxembourg
 		'NL' => 'NL', //Netherlands
@@ -28,7 +28,7 @@ function vat_validation($prefix, $number) {
 		'RO' => 'RO', //Romania
 		'SK' => 'SK', //Slovakia
 		'CZ' => 'CZ', //Czech Republic
-		'SI' => 'SI'  //Slovania
+		'SI' => 'SI'  //Slovenia
 	);
 
 	if (array_search(substr($number, 0, 2), $iso_code_2_data)) {
@@ -38,12 +38,14 @@ function vat_validation($prefix, $number) {
 	if (array_key_exists($prefix, $iso_code_2_data)) {
 		$response = file_get_contents('http://ec.europa.eu/taxation_customs/vies/viesquer.do?ms=' . $iso_code_2_data[$prefix] . '&iso=' . $iso_code_2_data[$prefix] . '&vat=' . $number);
 
-		if (preg_match('/\bvalid VAT number\b/i', $response)) {
-			return 'valid';
-		}
-
-		if (preg_match('/\binvalid VAT number\b/i', $response)) {
-			return 'invalid';
+		if ($response !== false) {
+			if (preg_match('/\bvalid VAT number\b/i', $response)) {
+				return 'valid';
+			} else {
+				return 'invalid';
+			}
+		} else {
+			return 'unknown';
 		}
 	} else {
 		return 'unknown';
