@@ -226,7 +226,16 @@ class Cart {
 					}
 
 					// Stock
-					if (!$product_query->row['quantity'] || ($product_query->row['quantity'] < $quantity)) {
+					$needed = 0;
+					foreach ($this->session->data['cart'] as $key_2 => $quantity_2) {
+						$product_2 = explode(':', $key_2);
+
+						if ($product_2[0] == $product_id) {
+							$needed += $quantity_2;
+						}
+					}
+
+					if (!$product_query->row['quantity'] || ($product_query->row['quantity'] < $needed)) {
 						$stock = false;
 					}
 
