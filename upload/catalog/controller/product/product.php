@@ -15,7 +15,7 @@ class ControllerProductProduct extends Controller {
 
 		$this->load->model('catalog/category');
 
-		if (isset($this->request->get['path'])) {
+		if (isset($this->request->get['path']) && !is_array($this->request->get['path'])) {
 			$url = '';
 
 			if (isset($this->request->get['sort'])) {
@@ -362,7 +362,7 @@ class ControllerProductProduct extends Controller {
 					foreach ($option['option_value'] as $option_value) {
 						if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
 							if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
-							$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false));
+								$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false));
 							} else {
 								$price = false;
 							}
@@ -625,16 +625,16 @@ class ControllerProductProduct extends Controller {
 
 		$json = array();
 
-		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
-			if ((utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 25)) {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST' && $this->config->get('config_review_status')) {
+			if (empty($this->request->post['name']) || (utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 25)) {
 				$json['error'] = $this->language->get('error_name');
 			}
 
-			if ((utf8_strlen($this->request->post['text']) < 25) || (utf8_strlen($this->request->post['text']) > 1000)) {
+			if (empty($this->request->post['text']) || (utf8_strlen($this->request->post['text']) < 25) || (utf8_strlen($this->request->post['text']) > 1000)) {
 				$json['error'] = $this->language->get('error_text');
 			}
 
-			if (empty($this->request->post['rating'])) {
+			if (empty($this->request->post['rating']) || (int)$this->request->post['rating'] < 1 || (int)$this->request->post['rating'] > 5) {
 				$json['error'] = $this->language->get('error_rating');
 			}
 

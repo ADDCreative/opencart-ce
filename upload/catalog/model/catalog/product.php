@@ -114,7 +114,7 @@ class ModelCatalogProduct extends Model {
 			if (!empty($data['filter_name'])) {
 				$implode = array();
 
-				$words = explode(' ', trim(preg_replace('/\s\s+/', ' ', $data['filter_name'])));
+				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
 
 				foreach ($words as $word) {
 					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
@@ -452,7 +452,7 @@ class ModelCatalogProduct extends Model {
 		if ($query->num_rows) {
 			return $query->row['layout_id'];
 		} else {
-			return  $this->config->get('config_layout_product');
+			return 0;
 		}
 	}
 
@@ -515,7 +515,7 @@ class ModelCatalogProduct extends Model {
 			if (!empty($data['filter_name'])) {
 				$implode = array();
 
-				$words = explode(' ', trim(preg_replace('/\s\s+/', ' ', $data['filter_name'])));
+				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
 
 				foreach ($words as $word) {
 					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
