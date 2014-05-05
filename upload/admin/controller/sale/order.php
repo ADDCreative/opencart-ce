@@ -20,6 +20,22 @@ class ControllerSaleOrder extends Controller {
 		$this->load->model('sale/order');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+			$this->load->model('localisation/currency');
+
+			$currency_info = $this->model_localisation_currency->getCurrencyByCode($this->config->get('config_currency'));
+
+			if ($currency_info) {
+				$currency_code = $currency_info['code'];
+				$currency_value = $currency_info['value'];
+			} else {
+				$currency_code = $this->config->get('config_currency');
+				$currency_value = 1.00000;
+			}
+
+			foreach ($this->request->post['order_total'] as &$total) {
+				$total['text'] = $this->currency->format($total['value'], $currency_code, $currency_value);
+			}
+
 			$this->model_sale_order->addOrder($this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -76,6 +92,14 @@ class ControllerSaleOrder extends Controller {
 		$this->load->model('sale/order');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+			$order_information = $this->model_sale_order->getOrder($this->request->get['order_id']);
+
+			if ($order_information) {
+				foreach ($this->request->post['order_total'] as &$total) {
+					$total['text'] = $this->currency->format($total['value'], $order_information['currency_code'], $order_information['currency_value']);
+				}
+			}
+
 			$this->model_sale_order->editOrder($this->request->get['order_id'], $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
