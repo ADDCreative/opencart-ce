@@ -30,6 +30,11 @@ class ControllerCheckoutManual extends Controller {
 			// Manual order flag
 			$this->session->data['manual'] = true;
 
+			// Currency
+			if (!empty($this->request->post['currency_code']) && !empty($this->request->post['currency_value'])) {
+				$this->currency->override($this->request->post['currency_code'], $this->request->post['currency_value']);
+			}
+
 			// Settings
 			$this->load->model('setting/setting');
 
