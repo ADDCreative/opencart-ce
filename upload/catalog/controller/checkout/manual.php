@@ -33,6 +33,8 @@ class ControllerCheckoutManual extends Controller {
 			// Currency
 			if (!empty($this->request->post['currency_code']) && !empty($this->request->post['currency_value'])) {
 				$this->currency->override($this->request->post['currency_code'], $this->request->post['currency_value']);
+			} else {
+				$this->currency->set($this->config->get('config_currency'));
 			}
 
 			// Settings
