@@ -59,7 +59,7 @@ class ControllerPaymentPPStandard extends Controller {
 
 			$this->data['discount_amount_cart'] = 0;
 
-			$total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false) - $subtotal;
+			$total = $this->currency->format($this->currency->convert($order_info['total'], $this->config->get('config_currency'), $order_info['currency_code']) - $subtotal, $order_info['currency_code'], 1.0, false);
 
 			if ($total > 0) {
 				$this->data['products'][] = array(
