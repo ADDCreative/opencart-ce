@@ -771,6 +771,13 @@ $('input[name=\'manufacturer\']').autocomplete({
 			}
 		});
 	}
+}).bind('blur',function(){
+  
+  if( $(this).attr('value') == '' )
+  {
+    $('input[name=\'manufacturer_id\']').attr('value', '');
+  }
+
 });
 
 // Category
